@@ -21,5 +21,16 @@ Public Class SiteMaster
         If Request.IsAuthenticated Then
             HttpContext.Current.GetOwinContext().Authentication.SignOut("keycloak_sso_auth")
         End If
+
+        Dim authority As String = ConfigurationManager.AppSettings("oidc:Authority")
+        Dim clientId As String = ConfigurationManager.AppSettings("oidc:ClientId")
+        Dim postLogoutRedirectUri As String = ConfigurationManager.AppSettings("oidc:PostLogoutRedirectUri")
+
+        ' Construct the logout URL
+        Dim logoutUrl As String = $"{authority}/protocol/openid-connect/logout?client_id={clientId}&post_logout_redirect_uri={HttpUtility.UrlEncode(postLogoutRedirectUri)}"
+
+        ' Redirect to Keycloak logout
+        Response.Redirect(logoutUrl)
+
     End Sub
 End Class
